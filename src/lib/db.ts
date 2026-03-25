@@ -1,17 +1,16 @@
-import {PrismaClient} from "@prisma/client/extension";
+import { PrismaClient } from "@/generated/prisma";
+import { PrismaNeon } from "@prisma/adapter-neon";
 
-
+const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! });
 
 const globalForPrisma = global as unknown as {
-    prisma : PrismaClient;
-}
+    prisma: PrismaClient;
+};
 
-const prisma = globalForPrisma.prisma || new PrismaClient();
-
+const prisma = globalForPrisma.prisma || new PrismaClient({ adapter });
 
 if (process.env.NODE_ENV !== "production") {
     globalForPrisma.prisma = prisma;
-
 }
 
 export default prisma;
