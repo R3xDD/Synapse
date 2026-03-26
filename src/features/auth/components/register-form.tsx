@@ -87,7 +87,7 @@ export function RegisterForm(){
                                     disabled={isPending}
                                     className={cn("flex items-center justify-center gap-2", isPending && "cursor-not-allowed")}
                                     >
-                                        <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
+                                        <Image src="/logos/github.svg" alt="Github" width={20} height={20} />
                                         {isPending ? "Signing in..." : "Continue with Github"}
                                     </Button>
 
@@ -99,7 +99,7 @@ export function RegisterForm(){
                                     disabled={isPending}
                                     className={cn("flex items-center justify-center gap-2", isPending && "cursor-not-allowed")}
                                     >
-                                        <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
+                                        <Image src="/logos/google.svg" alt="Google" width={20} height={20} />
                                         {isPending ? "Signing in..." : "Continue with Google"}
                                     </Button>
 

@@ -2,123 +2,105 @@
 import {zodResolver} from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import{useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import {useForm} from "react-hook-form";
 import {toast} from "sonner";
 import {z} from "zod";
 import {Button} from "@/components/ui/button";
-import {Card,
-CardHeader,
-CardContent,
-CardDescription,
-CardTitle,
-} from "@/components/ui/card";
-import {Form,
-FormField,
-FormControl,
-FormItem,
-FormLabel,
-FormMessage,
-} from "@/components/ui/form";
+import {Card, CardHeader, CardContent, CardDescription, CardTitle} from "@/components/ui/card";
+import {Form, FormField, FormControl, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {cn} from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
 
-
 const loginSchema = z.object({
-    email:z.email("Please enter a valid email address"),
-    password: z.string().min(1,"Password is required"),
+    email: z.email("Please enter a valid email address"),
+    password: z.string().min(1, "Password is required"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-
-export function LoginForm(){
+export function LoginForm() {
     const router = useRouter();
     const form = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
-        defaultValues:{
-            email:"",
-            password:"",
+        defaultValues: {
+            email: "",
+            password: "",
         },
     });
-    const onSubmit = async (values : LoginFormValues) => {
+
+    const onSubmit = async (values: LoginFormValues) => {
         await authClient.signIn.email({
-            email:values.email, 
-            password:values.password,
-            callbackURL:"/",
-        },{
-            onSuccess:()=>{
+            email: values.email,
+            password: values.password,
+            callbackURL: "/",
+        }, {
+            onSuccess: () => {
                 toast.success("Logged in successfully");
                 router.push("/");
             },
-            onError:(ctx)=>{
+            onError: (ctx) => {
                 toast.error(ctx.error.message || "Failed to login");
-            }   
-        }
-        )
-        
-    }
+            }
+        });
+    };
 
     const isPending = form.formState.isSubmitting;
+
     return (
         <div className="flex flex-col gap-6">
             <Card>
-                <CardHeader className="text-center">
+                <CardHeader className="text-center pb-4">
                     <CardTitle className="text-2xl">Welcome back</CardTitle>
                     <CardDescription>Login to continue</CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-6">
+                <CardContent className="grid gap-4">
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid w-full gap-6">
-                            <div className="grid gap-6">
-                                <div className="flex flex-col gap-4">
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid w-full gap-4">
+                            <div className="grid gap-4">
+                                <div className="flex flex-col gap-3">
                                     <Button
-                                    variant="outline"
-                                    type="button"
-                                    disabled={isPending}
-                                    className={cn("flex items-center justify-center gap-2", isPending && "cursor-not-allowed")}
+                                        variant="outline"
+                                        type="button"
+                                        disabled={isPending}
+                                        className={cn("flex items-center justify-center gap-2", isPending && "cursor-not-allowed")}
                                     >
-                                        <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
+                                        <Image src="/logos/github.svg" alt="Github" width={20} height={20} />
                                         {isPending ? "Signing in..." : "Continue with Github"}
                                     </Button>
-
-                                </div>
-                                <div className="flex flex-col gap-4">
                                     <Button
-                                    variant="outline"
-                                    type="button"
-                                    disabled={isPending}
-                                    className={cn("flex items-center justify-center gap-2", isPending && "cursor-not-allowed")}
+                                        variant="outline"
+                                        type="button"
+                                        disabled={isPending}
+                                        className={cn("flex items-center justify-center gap-2", isPending && "cursor-not-allowed")}
                                     >
-                                        <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
+                                        <Image src="/logos/google.svg" alt="Google" width={20} height={20} />
                                         {isPending ? "Signing in..." : "Continue with Google"}
                                     </Button>
-
                                 </div>
-                                <div className="grid gap-6">
-                                    <FormField control={form.control} name="email" render={({field})=>(
-                                <FormItem className="grid w-full gap-3">
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Enter your email" {...field} /> 
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
-                            <FormField control={form.control} name="password" render={({field})=>(
-                                <FormItem className="grid w-full gap-3">
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" placeholder="Enter your password" {...field} /> 
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
-                             <Button type="submit" disabled={isPending}>
-                                {isPending ? "Logging in..." : "Login"}
-                            </Button>
-
+                                <div className="grid gap-4">
+                                    <FormField control={form.control} name="email" render={({ field }) => (
+                                        <FormItem className="grid gap-2">
+                                            <FormLabel>Email</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Enter your email" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                    <FormField control={form.control} name="password" render={({ field }) => (
+                                        <FormItem className="grid gap-2">
+                                            <FormLabel>Password</FormLabel>
+                                            <FormControl>
+                                                <Input type="password" placeholder="Enter your password" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                    <Button type="submit" disabled={isPending}>
+                                        {isPending ? "Logging in..." : "Login"}
+                                    </Button>
                                 </div>
                                 <div className="text-center text-sm">
                                     Don&apos;t have an account?{" "}
@@ -132,5 +114,5 @@ export function LoginForm(){
                 </CardContent>
             </Card>
         </div>
-    )
+    );
 }
