@@ -1,0 +1,8 @@
+procs:
+  next:
+    cmd: ["cmd", "/c", "npm run dev"]
+    autostart: true
+
+  inngest:
+    cmd: ["cmd", "/c", "npm run inngest:dev"]
+    autostart: true
