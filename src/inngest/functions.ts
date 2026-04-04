@@ -1,15 +1,26 @@
-// src/inngest/functions.ts
 import { inngest } from "./client";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { generateText } from "ai";
 
-export const processTask = inngest.createFunction(
-  { id: "process-task", triggers: { event: "app/task.created" } },
+
+
+
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_API_KEY,
+});
+export const execute = inngest.createFunction(
+  { id: "execute", triggers: { event: "execute/ai" } },
   async ({ event, step }) => {
-    const result = await step.run("handle-task", async () => {
-      return { processed: true, id: event.data.id };
-    });
+    await step.sleep("pretend","5s")
+    const {steps} = await step.ai.wrap(
+      "gemini-generate-text",
+      generateText , {
+        model: google("gemini-2.5-flash"),
+        system: "You are a helpful assistant for generating text.",
+        prompt:"what is 2 + 2 ?",
+      })
+      return steps;
 
-    await step.sleep("pause", "1s");
-
-    return { message: `Task ${event.data.id} complete`, result };
+      //if we pay ,we can add openai and anthropic and whatever we want by havin the secret api keys
   }
 );
