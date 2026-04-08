@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import { Sign } from "crypto";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { useHasActiveSubscription } from "@/features/subscriptions/use-subscription";
 const menuItems = [
     {
         title: "Home",
@@ -53,7 +54,8 @@ const menuItems = [
 
 export const AppSidebar = () => {
     const pathname = usePathname();
-    const router = useRouter(); 
+    const router = useRouter();
+    const {hasActiveSubscription, isLoading} = useHasActiveSubscription();
     return (
         <Sidebar collapsible="icon">
             <SidebarHeader>
@@ -108,17 +110,25 @@ export const AppSidebar = () => {
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
+                    {!hasActiveSubscription && !isLoading && (
                         <SidebarMenuButton
                             tooltip="Upgrade To Pro"
-                            onClick={() => toast("Upgraded to Pro")}
+                            onClick={() => {
+                                toast("Upgraded to Pro");
+                                authClient.checkout({slug:"pro"})
+                            }
+                            }
                             className="gap-x-4 h-10 px-4"
                         >
                             <StarIcon size={18} />
                             <span className="font-medium">Upgrade To Pro</span>
                         </SidebarMenuButton>
+                    )}
+                    
+                        
                         <SidebarMenuButton
                             tooltip="Billing Portal"
-                            onClick={() => toast("Accessed Billing Portal")}
+                            onClick={() => authClient.customer.portal()}
                             className="gap-x-4 h-10 px-4"
                         >
                             <CreditCardIcon size={18} />
